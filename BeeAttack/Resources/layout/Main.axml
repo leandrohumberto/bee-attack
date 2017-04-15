@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="25px"
+    android:minHeight="25px">
+    <AbsoluteLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/absGameArea"
+        android:background="#FF87CEEB">
+        <LinearLayout
+            android:orientation="vertical"
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/linStart"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:id="@+id/linTitle">
+                <TextView
+                    android:text="Bee"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:id="@+id/textBee"
+                    android:textColor="#FFFFFF00"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@android:dimen/app_icon_size"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+                <ImageView
+                    android:src="@drawable/bee"
+                    android:layout_width="@android:dimen/app_icon_size"
+                    android:layout_height="@android:dimen/app_icon_size"
+                    android:id="@+id/imageBee" />
+                <TextView
+                    android:text="Attack"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:id="@+id/textAttack"
+                    android:textColor="@android:color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="@android:dimen/app_icon_size"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+            </LinearLayout>
+            <Button
+                android:text="Start a new game"
+                android:id="@+id/button1"
+                android:layout_width="match_parent"
+                android:layout_height="60dip"
+                android:gravity="center"
+                android:layout_marginTop="10px"
+                android:background="#FF87CEEF"
+                android:textStyle="bold"
+                android:textSize="20dip" />
+        </LinearLayout>
+    </AbsoluteLayout>
+</LinearLayout>

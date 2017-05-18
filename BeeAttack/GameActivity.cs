@@ -16,7 +16,10 @@ namespace BeeAttack
         ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class GameActivity : Activity
     {
-        private ImageView _flower;
+        public ImageView Flower;
+        public ImageView Hive;
+        public RelativeLayout GameArea;
+        private Services.BeeAtackService _service;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -24,15 +27,21 @@ namespace BeeAttack
             SetContentView(Resource.Layout.Game);
 
             // Create your application here
-            _flower = FindViewById<ImageView>(Resource.Id.flowerView);
-            _flower.Touch += _flower_Touch;
+            Flower = FindViewById<ImageView>(Resource.Id.flowerView);
+            Hive = FindViewById<ImageView>(Resource.Id.hiveView);
+            GameArea = FindViewById<RelativeLayout>(Resource.Id.gameArea);
         }
 
-        private void _flower_Touch(object sender, View.TouchEventArgs e)
+        public override void OnWindowFocusChanged(bool hasFocus)
         {
-            if (e.Event.Action == MotionEventActions.Move)
+            base.OnResume();
+
+            if (_service == null)
             {
-                _flower.TranslationX += e.Event.GetX();
+                _service = new Services.BeeAtackService(this);
+                _service.StartGame(new System.Drawing.Size(Flower.Width, Flower.Height),
+                    new System.Drawing.Size(Hive.Width, Hive.Height),
+                    new System.Drawing.Size(GameArea.Width, GameArea.Height));
             }
         }
     }

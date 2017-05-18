@@ -5,7 +5,7 @@
     android:background="#FF87CEEB"
     android:minWidth="25px"
     android:minHeight="25px"
-    android:id="@+id/gameArea" >
+    android:id="@+id/gameArea">
     <ImageView
         android:src="@drawable/hive"
         android:layout_width="70dp"

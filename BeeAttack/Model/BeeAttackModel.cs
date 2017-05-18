@@ -1,14 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 
 namespace BeeAttack.Model
 {
@@ -16,6 +6,7 @@ namespace BeeAttack.Model
     {
         public int MissesLeft { get; private set; }
         public int Score { get; private set; }
+
         public TimeSpan TimeBetweenBees
         {
             get
@@ -29,13 +20,13 @@ namespace BeeAttack.Model
         private double _flowerWidth;
         private double _beeWidth;
         private double _flowerLeft;
-        private double _playAreaWidth;
+        private float _playAreaWidth;
         private double _hiveWidth;
-        private double _lastHiveLocation;
+        private float _lastHiveLocation;
         private bool _gameOver;
         private readonly Random _random = new Random();
 
-        public void StartGame(double flowerWidth, double beeWidth, double playAreaWidth, double hiveWidth)
+        public void StartGame(double flowerWidth, double beeWidth, float playAreaWidth, double hiveWidth)
         {
             _flowerWidth = flowerWidth;
             _beeWidth = beeWidth;
@@ -75,9 +66,9 @@ namespace BeeAttack.Model
             }
         }
 
-        public double NextHiveLocation()
+        public float NextHiveLocation()
         {
-            double delta = 10 + Math.Max(1, Score * .5);
+            float delta = 10 + Math.Max(1, Score * .5f);
 
             if (_lastHiveLocation <= delta)
                 _lastHiveLocation += delta;
@@ -92,25 +83,19 @@ namespace BeeAttack.Model
         public event EventHandler GameOver;
         private void OnGameOver()
         {
-            EventHandler gameOver = GameOver;
-            if (gameOver != null)
-                gameOver(this, new EventArgs());
+            GameOver?.Invoke(this, new EventArgs());
         }
 
         public event EventHandler Missed;
         private void OnMissed()
         {
-            EventHandler missed = Missed;
-            if (missed != null)
-                missed(this, new EventArgs());
+            Missed?.Invoke(this, new EventArgs());
         }
 
         public event EventHandler PlayerScored;
         private void OnPlayerScored()
         {
-            EventHandler playerScored = PlayerScored;
-            if (playerScored != null)
-                playerScored(this, new EventArgs());
+            PlayerScored?.Invoke(this, new EventArgs());
         }
     }
 }

@@ -49,12 +49,17 @@
         <Button
             android:text="Start a new game"
             android:id="@+id/button1"
-            android:layout_width="match_parent"
-            android:layout_height="60dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_marginTop="10px"
-            android:background="#FF87CEEF"
+            android:layout_marginTop="30px"
+            android:background="@drawable/startbutton_background"
             android:textStyle="bold"
-            android:textSize="20dip" />
+            android:textSize="20dip"
+            android:shadowColor="#000000"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:layout_gravity="center" />
     </LinearLayout>
 </LinearLayout>

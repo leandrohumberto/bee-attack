@@ -11,31 +11,28 @@ namespace BeeAttack.Services
 {
     public class BeeAttackService
     {
+        public bool GameStarted { get; private set; }
+        public event EventHandler<float> HiveMoved;
+        public event EventHandler<ImageView> BeeAdded;
+
         private readonly ObservableCollection<ImageView> _beeControls =
             new ObservableCollection<ImageView>();
         private readonly Model.BeeAttackModel _model = new Model.BeeAttackModel();
         private float _hiveTranslation;
         private ViewStates _gameOver;
         private Size _beeSize;
-        private readonly Timer _timer;
+        private Timer _timer;
         private Size _playAreaSize;
         private Size _hiveSize;
         private Size _flowerSize;
         private GameActivity _gameActivity;
-
-        public event EventHandler<float> HiveMoved;
-        public event EventHandler<ImageView> BeeAdded;
-
+        
         public BeeAttackService(GameActivity gameActivity)
         {
             _gameActivity = gameActivity;
             _model.Missed += MissedEventHandler;
             _model.GameOver += GameOverEventHandler;
             _model.PlayerScored += PlayerScoredEventHandler;
-
-            //_timer.Tick += HiveTimerTick;
-            _timer = new Timer(new TimerCallback(this.HiveTimerTick));
-
             _gameOver = ViewStates.Visible;
             // OnPropertyChanged("GameOver");
         }
@@ -92,6 +89,7 @@ namespace BeeAttack.Services
 
         public void StartGame(Size flowerSize, Size hiveSize, Size playAreaSize)
         {
+            _timer = new Timer(new TimerCallback(this.HiveTimerTick));
             _flowerSize = flowerSize;
             _hiveSize = hiveSize;
             _playAreaSize = playAreaSize;
@@ -103,6 +101,7 @@ namespace BeeAttack.Services
 
             _gameOver = ViewStates.Invisible;
             // OnPropertyChanged("GameOver");
+            GameStarted = true;
         }
 
         private void BeeLanded(object sender, EventArgs e)

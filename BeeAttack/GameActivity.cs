@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Views.Animations;
 
 namespace BeeAttack
 {
@@ -16,9 +17,10 @@ namespace BeeAttack
         ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class GameActivity : Activity
     {
-        public ImageView Flower;
-        public ImageView Hive;
-        public RelativeLayout GameArea;
+        private ImageView _flower;
+        private ImageView _hive;
+        private RelativeLayout _gameArea;
+        private Button _restart;
         private Services.BeeAttackService _service;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -26,12 +28,19 @@ namespace BeeAttack
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Game);
 
-            // Create your application here
-            Flower = FindViewById<ImageView>(Resource.Id.flowerView);
-            Hive = FindViewById<ImageView>(Resource.Id.hiveView);
-            GameArea = FindViewById<RelativeLayout>(Resource.Id.gameArea);
+            _flower = FindViewById<ImageView>(Resource.Id.flowerView);
+            _hive = FindViewById<ImageView>(Resource.Id.hiveView);
+            _gameArea = FindViewById<RelativeLayout>(Resource.Id.gameArea);
+            _restart = FindViewById<Button>(Resource.Id.restartButton);
+            _service = new Services.BeeAttackService(this);
 
-            Flower.Touch += Flower_Touch;
+            _flower.Touch += Flower_Touch;
+            _restart.Click += delegate 
+            {
+                Intent intent = Intent;
+                Finish();
+                StartActivity(intent);
+            };
         }
 
         private void Flower_Touch(object sender, View.TouchEventArgs e)
@@ -46,9 +55,9 @@ namespace BeeAttack
         {
             _service.MoveFlower(newX);
 
-            if (Flower.TranslationX + Flower.Width + newX <= GameArea.Width || Flower.TranslationX + newX < 0)
+            if (_flower.TranslationX + _flower.Width + newX <= _gameArea.Width || _flower.TranslationX + newX < 0)
             {
-                Flower.TranslationX += newX;
+                _flower.TranslationX += newX;
             }
         }
 
@@ -56,26 +65,50 @@ namespace BeeAttack
         {
             base.OnResume();
 
-            if (_service == null)
+            if (!_service.GameStarted)
             {
-                _service = new Services.BeeAttackService(this);
-                _service.HiveMoved += _service_HiveMoved;
-                _service.BeeAdded += _service_BeeAdded;
-                _service.StartGame(new System.Drawing.Size(Flower.Width, Flower.Height),
-                    new System.Drawing.Size(Hive.Width, Hive.Height),
-                    new System.Drawing.Size(GameArea.Width, GameArea.Height));
-                MoveFlower((GameArea.Width - Flower.Width) / 2);
+                StartGame();
             }
+        }
+
+        private void StartGame()
+        {
+            _service.HiveMoved += _service_HiveMoved;
+            _service.BeeAdded += _service_BeeAdded;
+            _service.StartGame(new System.Drawing.Size(_flower.Width, _flower.Height),
+                new System.Drawing.Size(_hive.Width, _hive.Height),
+                new System.Drawing.Size(_gameArea.Width, _gameArea.Height));
+            MoveFlower((_gameArea.Width - _flower.Width) / 2);
         }
 
         private void _service_BeeAdded(object sender, ImageView bee)
         {
-            RunOnUiThread(() => GameArea.AddView(bee));
+            bee.StartAnimation(AnimationUtils.LoadAnimation(this, Resource.Animation.beeview_animation));
+            RunOnUiThread(() => _gameArea.AddView(bee));
+
+            bee.Animation.AnimationEnd += delegate
+            {
+                try
+                {
+                    bee.Animation.Cancel();
+                    bee.ClearAnimation();
+
+                    // Caution: Gambiarra!!!
+                    // TODO: There must be a better way to remove the views... 
+                    // RunOnUiThread(() => GameArea.RemoveView(bee)) causes an exception
+                    bee.Visibility = ViewStates.Invisible;
+                    bee.Dispose();
+                }
+                catch (Exception e)
+                {
+                    e.Message.ToString();
+                }
+            };
         }
 
         private void _service_HiveMoved(object sender, float x)
         {
-            RunOnUiThread(() => Hive.TranslationX = x);
+            RunOnUiThread(() => _hive.TranslationX = x);
         }
     }
 }

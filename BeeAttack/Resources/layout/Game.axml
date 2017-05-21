@@ -17,4 +17,59 @@
         android:layout_alignParentBottom="true"
         android:src="@drawable/flower"
         android:id="@+id/flowerView" />
+    <TextView
+        android:text="Misses Left:"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/hiveView"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/missesLeftLabel" />
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/missesLeftLabel"
+        android:layout_below="@id/hiveView"
+        android:id="@+id/missesLeftLabel" />
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/black"
+        android:textSize="40dp"
+        android:textStyle="bold"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/hiveView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/score" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gameOverLayout"
+        android:layout_centerInParent="true"
+        android:translationZ="100dp"
+        android:visibility="invisible">
+        <TextView
+            android:text="Game Over"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="45dp"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/gameOverText" />
+        <Button
+            android:text="Restart"
+            android:background="@drawable/button_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/restartButton" />
+    </LinearLayout>
 </RelativeLayout>

@@ -28,6 +28,22 @@ namespace BeeAttack
 		{
 		}
 		
+		public partial class Animation
+		{
+			
+			// aapt resource value: 0x7f040000
+			public const int beeview_animation = 2130968576;
+			
+			static Animation()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Animation()
+			{
+			}
+		}
+		
 		public partial class Attribute
 		{
 			
@@ -48,16 +64,16 @@ namespace BeeAttack
 			public const int bee = 2130837504;
 			
 			// aapt resource value: 0x7f020001
-			public const int flower = 2130837505;
+			public const int button_background = 2130837505;
 			
 			// aapt resource value: 0x7f020002
-			public const int hive = 2130837506;
+			public const int flower = 2130837506;
 			
 			// aapt resource value: 0x7f020003
-			public const int Icon = 2130837507;
+			public const int hive = 2130837507;
 			
 			// aapt resource value: 0x7f020004
-			public const int startbutton_background = 2130837508;
+			public const int Icon = 2130837508;
 			
 			static Drawable()
 			{
@@ -72,32 +88,47 @@ namespace BeeAttack
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f060008
-			public const int button1 = 2131099656;
+			// aapt resource value: 0x7f07000d
+			public const int button1 = 2131165197;
 			
-			// aapt resource value: 0x7f060002
-			public const int flowerView = 2131099650;
+			// aapt resource value: 0x7f070002
+			public const int flowerView = 2131165186;
 			
-			// aapt resource value: 0x7f060000
-			public const int gameArea = 2131099648;
+			// aapt resource value: 0x7f070000
+			public const int gameArea = 2131165184;
 			
-			// aapt resource value: 0x7f060001
-			public const int hiveView = 2131099649;
+			// aapt resource value: 0x7f070005
+			public const int gameOverLayout = 2131165189;
 			
-			// aapt resource value: 0x7f060006
-			public const int imageBee = 2131099654;
+			// aapt resource value: 0x7f070006
+			public const int gameOverText = 2131165190;
 			
-			// aapt resource value: 0x7f060003
-			public const int linStart = 2131099651;
+			// aapt resource value: 0x7f070001
+			public const int hiveView = 2131165185;
 			
-			// aapt resource value: 0x7f060004
-			public const int linTitle = 2131099652;
+			// aapt resource value: 0x7f07000b
+			public const int imageBee = 2131165195;
 			
-			// aapt resource value: 0x7f060007
-			public const int textAttack = 2131099655;
+			// aapt resource value: 0x7f070008
+			public const int linStart = 2131165192;
 			
-			// aapt resource value: 0x7f060005
-			public const int textBee = 2131099653;
+			// aapt resource value: 0x7f070009
+			public const int linTitle = 2131165193;
+			
+			// aapt resource value: 0x7f070003
+			public const int missesLeftLabel = 2131165187;
+			
+			// aapt resource value: 0x7f070007
+			public const int restartButton = 2131165191;
+			
+			// aapt resource value: 0x7f070004
+			public const int score = 2131165188;
+			
+			// aapt resource value: 0x7f07000c
+			public const int textAttack = 2131165196;
+			
+			// aapt resource value: 0x7f07000a
+			public const int textBee = 2131165194;
 			
 			static Id()
 			{
@@ -131,11 +162,11 @@ namespace BeeAttack
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f040001
-			public const int ApplicationName = 2130968577;
+			// aapt resource value: 0x7f050001
+			public const int ApplicationName = 2131034113;
 			
-			// aapt resource value: 0x7f040000
-			public const int Hello = 2130968576;
+			// aapt resource value: 0x7f050000
+			public const int Hello = 2131034112;
 			
 			static String()
 			{
@@ -150,8 +181,8 @@ namespace BeeAttack
 		public partial class Style
 		{
 			
-			// aapt resource value: 0x7f050000
-			public const int StartUpAppTheme = 2131034112;
+			// aapt resource value: 0x7f060000
+			public const int StartUpAppTheme = 2131099648;
 			
 			static Style()
 			{

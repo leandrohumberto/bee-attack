@@ -64,7 +64,10 @@
     <AndroidResource Include="Resources\layout\Game.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\drawable\startbutton_background.axml">
+    <AndroidResource Include="Resources\drawable\button_background.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\anim\beeview_animation.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

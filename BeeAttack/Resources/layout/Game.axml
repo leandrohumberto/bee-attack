@@ -10,6 +10,7 @@
         android:src="@drawable/hive"
         android:layout_width="70dp"
         android:layout_height="70dp"
+        android:layout_marginTop="5dp"
         android:id="@+id/hiveView" />
     <ImageView
         android:layout_width="67dp"
@@ -36,8 +37,9 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/missesLeftLabel"
         android:layout_below="@id/hiveView"
-        android:id="@+id/missesLeftLabel" />
+        android:id="@+id/missesLeftText" />
     <TextView
+        android:text="0"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@android:color/black"
         android:textSize="40dp"
@@ -46,7 +48,7 @@
         android:layout_below="@id/hiveView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/score" />
+        android:id="@+id/scoreText" />
     <LinearLayout
         android:orientation="vertical"
         android:minWidth="25px"

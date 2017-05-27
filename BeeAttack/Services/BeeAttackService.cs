@@ -1,25 +1,37 @@
-﻿using Android.Content.Res;
-using Android.Graphics.Drawables;
-using Android.Views;
+﻿using Android.Views;
 using Android.Widget;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 
 namespace BeeAttack.Services
 {
     public class BeeAttackService
     {
-        public bool GameStarted { get; private set; }
+        private bool _isGameOver;
+
+        public bool IsGameOver
+        {
+            get { return _isGameOver; }
+            private set
+            {
+                _isGameOver = value;
+                OnGameOver();
+            }
+        }
+
         public event EventHandler<float> HiveMoved;
         public event EventHandler<ImageView> BeeAdded;
+        public event EventHandler GameOver;
+        public event EventHandler<int> Missed;
+        public event EventHandler<int> Scored;
 
-        private readonly ObservableCollection<ImageView> _beeControls =
-            new ObservableCollection<ImageView>();
+        private readonly ObservableCollection<ImageView> _beeControls = new ObservableCollection<ImageView>();
         private readonly Model.BeeAttackModel _model = new Model.BeeAttackModel();
         private float _hiveTranslation;
-        private ViewStates _gameOver;
         private Size _beeSize;
         private Timer _timer;
         private Size _playAreaSize;
@@ -33,16 +45,13 @@ namespace BeeAttack.Services
             _model.Missed += MissedEventHandler;
             _model.GameOver += GameOverEventHandler;
             _model.PlayerScored += PlayerScoredEventHandler;
-            _gameOver = ViewStates.Visible;
-            // OnPropertyChanged("GameOver");
+            IsGameOver = false;
         }
 
         private void HiveTimerTick(object sender)
         {
-            if (_playAreaSize.Width <= 0 || _gameOver != ViewStates.Invisible)
-            {
+            if (_playAreaSize.Width <= 0 || IsGameOver)
                 return;
-            }
 
             _hiveTranslation = _model.NextHiveLocation();
             OnHiveMoved(_hiveTranslation);
@@ -57,12 +66,12 @@ namespace BeeAttack.Services
             bee.SetY(_hiveSize.Height);
             bee.Visibility = ViewStates.Visible;
 
-            _beeControls.Add(bee);
             OnBeeAdded(bee);
         }
 
         private void OnBeeAdded(ImageView bee)
         {
+            _beeControls.Add(bee);
             BeeAdded?.Invoke(this, bee);
         }
 
@@ -71,57 +80,64 @@ namespace BeeAttack.Services
             HiveMoved?.Invoke(this, _hiveTranslation);
         }
 
+        private void OnGameOver()
+        {
+            GameOver?.Invoke(this, new EventArgs());
+        }
+
+        private void OnMissed()
+        {
+            Missed?.Invoke(this, _model.MissesLeft);
+        }
+
+        private void OnScored()
+        {
+            Scored?.Invoke(this, _model.Score);
+        }
+
         void PlayerScoredEventHandler(object sender, EventArgs e)
         {
-            // OnPropertyChanged("Score");
             _timer.Change(_model.TimeBetweenBees, _model.TimeBetweenBees);
+            OnScored();
         }
 
         void GameOverEventHandler(object sender, EventArgs e)
         {
-            _gameOver = ViewStates.Visible;
+            IsGameOver = true;
         }
 
         void MissedEventHandler(object sender, EventArgs e)
         {
-            // OnPropertyChanged("MissesLeft");
+            OnMissed();
         }
 
         public void StartGame(Size flowerSize, Size hiveSize, Size playAreaSize)
         {
-            _timer = new Timer(new TimerCallback(this.HiveTimerTick));
+            _timer?.Dispose();
+            _timer = new Timer(new TimerCallback(HiveTimerTick), null, _model.TimeBetweenBees, _model.TimeBetweenBees);
             _flowerSize = flowerSize;
             _hiveSize = hiveSize;
             _playAreaSize = playAreaSize;
             _beeSize = new Size(playAreaSize.Width / 10, playAreaSize.Width / 10);
             _model.StartGame(_flowerSize.Width, _beeSize.Width, playAreaSize.Width, hiveSize.Width);
-            // OnPropertyChanged("MissesLeft");
+            OnMissed();
 
-            _timer.Change(_model.TimeBetweenBees, _model.TimeBetweenBees);
-
-            _gameOver = ViewStates.Invisible;
-            // OnPropertyChanged("GameOver");
-            GameStarted = true;
+            IsGameOver = false;
         }
 
-        private void BeeLanded(object sender, EventArgs e)
+        public void BeeLanded(object sender, EventArgs e)
         {
-            ImageView landedBee = null;
+            List<ImageView> landedBees = new List<ImageView>(_beeControls);
+            landedBees = (from control in landedBees
+                          where control.Animation == sender
+                          select control).ToList();
 
-            foreach (ImageView sprite in _beeControls)
+            if (landedBees.Count > 0)
             {
-                if (sprite == sender)
-                {
-                    landedBee = sprite;
-                }
-            }
-
-            _model.BeeLanded(landedBee.TranslationX);
-
-            if (landedBee != null)
-            {
+                var landedBee = landedBees.First();
+                _model.BeeLanded(landedBee.TranslationX);
                 _beeControls.Remove(landedBee);
-            }
+            }          
         }
 
         public void MoveFlower(float newX)

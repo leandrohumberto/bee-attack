@@ -46,7 +46,7 @@ namespace BeeAttack.Model
 
         public void BeeLanded(double beeLeft)
         {
-            if ((beeLeft < _flowerLeft) || ((beeLeft) > _flowerLeft + _flowerWidth))
+            if ((beeLeft + _beeWidth < _flowerLeft) || ((beeLeft) > _flowerLeft + _flowerWidth))
             {
                 if (MissesLeft > 0)
                 {
@@ -68,7 +68,7 @@ namespace BeeAttack.Model
 
         public float NextHiveLocation()
         {
-            float delta = 10 + Math.Max(1, Score * .5f);
+            float delta = 10 + Math.Max(1, Score * 2.5f);
 
             if (_lastHiveLocation <= delta)
                 _lastHiveLocation += delta;

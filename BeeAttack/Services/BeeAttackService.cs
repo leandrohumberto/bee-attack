@@ -34,11 +34,11 @@ namespace BeeAttack.Services
         private readonly ObservableCollection<ImageView> _beeControls = new ObservableCollection<ImageView>();
         private readonly Model.BeeAttackModel _model = new Model.BeeAttackModel();
         private float _hiveTranslation;
-        private Size _beeSize;
+        private SizeF _beeSize;
         private Timer _timer;
-        private Size _playAreaSize;
-        private Size _hiveSize;
-        private Size _flowerSize;
+        private SizeF _playAreaSize;
+        private SizeF _hiveSize;
+        private SizeF _flowerSize;
         private GameActivity _gameActivity;
         
         public BeeAttackService(GameActivity gameActivity)
@@ -61,7 +61,7 @@ namespace BeeAttack.Services
             ImageView bee = new ImageView(_gameActivity);
             bee.TranslationX = _hiveTranslation + _hiveSize.Width / 2;
             bee.TranslationY = _playAreaSize.Height + _flowerSize.Height / 3;
-            var layoutParams = new RelativeLayout.LayoutParams(_beeSize.Width, _beeSize.Height);
+            var layoutParams = new RelativeLayout.LayoutParams((int)_beeSize.Width, (int)_beeSize.Height);
             layoutParams.AddRule(LayoutRules.AlignParentTop);
             bee.LayoutParameters = layoutParams;
             bee.SetImageResource(Resource.Drawable.bee);
@@ -113,14 +113,14 @@ namespace BeeAttack.Services
             OnMissed();
         }
 
-        public void StartGame(Size flowerSize, Size hiveSize, Size playAreaSize)
+        public void StartGame(SizeF flowerSize, SizeF hiveSize, SizeF playAreaSize)
         {
             _timer?.Dispose();
             _timer = new Timer(new TimerCallback(HiveTimerTick), null, _model.TimeBetweenBees, _model.TimeBetweenBees);
             _flowerSize = flowerSize;
             _hiveSize = hiveSize;
             _playAreaSize = playAreaSize;
-            _beeSize = new Size(playAreaSize.Width / 10, playAreaSize.Width / 10);
+            _beeSize = new SizeF(playAreaSize.Width / 10, playAreaSize.Width / 10);
             _model.StartGame(_flowerSize.Width, _beeSize.Width, playAreaSize.Width, hiveSize.Width);
             OnMissed();
 

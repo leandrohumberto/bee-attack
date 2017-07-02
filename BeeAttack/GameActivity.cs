@@ -116,9 +116,9 @@ namespace BeeAttack
 
         private void StartGame()
         {            
-            _service.StartGame(new System.Drawing.Size(_flower.Width, _flower.Height),
-                new System.Drawing.Size(_hive.Width, _hive.Height),
-                new System.Drawing.Size(_gameArea.Width, _gameArea.Height));
+            _service.StartGame(new System.Drawing.SizeF(_flower.Width, _flower.Height),
+                new System.Drawing.SizeF(_hive.Width, _hive.Height),
+                new System.Drawing.SizeF(_gameArea.Width, _gameArea.Height));
             MoveFlower((_gameArea.Width - _flower.Width) / 2);
             _gameOverLayout.Visibility = ViewStates.Invisible;
             _running = true;

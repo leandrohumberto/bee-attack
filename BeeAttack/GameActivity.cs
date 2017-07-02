@@ -61,6 +61,39 @@ namespace BeeAttack
             };
         }
 
+        protected override void OnPause()
+        {
+            base.OnPause();
+            PauseGame();
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            PauseGame();
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            PauseGame(false);
+        }
+
+        private void PauseGame(bool pause = true)
+        {
+            _service.Paused = pause;
+        }
+
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            base.OnWindowFocusChanged(hasFocus);
+
+            if (!_running && _gameOverLayout.Visibility == ViewStates.Invisible)
+            {
+                StartGame();
+            }
+        }
+
         private void Flower_Touch(object sender, View.TouchEventArgs e)
         {
             if (e.Event.Action == MotionEventActions.Move)
@@ -78,16 +111,6 @@ namespace BeeAttack
             {
                 _flower.TranslationX += newX - _flower.Width / 2;
                 _service.MoveFlower(_flower.TranslationX);
-            }
-        }
-
-        public override void OnWindowFocusChanged(bool hasFocus)
-        {
-            base.OnWindowFocusChanged(hasFocus);
-
-            if (!_running && _gameOverLayout.Visibility == ViewStates.Invisible)
-            {
-                StartGame();
             }
         }
 

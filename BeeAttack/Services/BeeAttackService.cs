@@ -23,6 +23,8 @@ namespace BeeAttack.Services
             }
         }
 
+        public bool Paused { get; set; }
+
         public event EventHandler<float> HiveMoved;
         public event EventHandler<ImageView> BeeAdded;
         public event EventHandler GameOver;
@@ -50,7 +52,7 @@ namespace BeeAttack.Services
 
         private void HiveTimerTick(object sender)
         {
-            if (_playAreaSize.Width <= 0 || IsGameOver)
+            if (_playAreaSize.Width <= 0 || IsGameOver || Paused)
                 return;
 
             _hiveTranslation = _model.NextHiveLocation();

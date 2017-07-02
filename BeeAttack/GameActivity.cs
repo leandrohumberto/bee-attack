@@ -21,6 +21,7 @@ namespace BeeAttack
         private Button _restart;
         private bool _running;
         private LinearLayout _gameOverLayout;
+        private Fragments.BeeAttackServiceFragment _fragment;
         private Services.BeeAttackService _service;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -35,7 +36,16 @@ namespace BeeAttack
             _score = FindViewById<TextView>(Resource.Id.scoreText);
             _restart = FindViewById<Button>(Resource.Id.restartButton);
             _gameOverLayout = FindViewById<LinearLayout>(Resource.Id.gameOverLayout);
-            _service = new Services.BeeAttackService(this);
+            _fragment = (Fragments.BeeAttackServiceFragment)FragmentManager.FindFragmentByTag("GameService");
+
+            if (_fragment == null)
+            {
+                _fragment = new Fragments.BeeAttackServiceFragment(new Services.BeeAttackService(this));
+                var fragmentTransaction = FragmentManager.BeginTransaction();
+                fragmentTransaction.Add(_fragment, "GameService");
+                fragmentTransaction.Commit();
+            }
+            _service = _fragment.Service;
 
             _service.HiveMoved += _service_HiveMoved;
             _service.BeeAdded += _service_BeeAdded;
@@ -73,7 +83,7 @@ namespace BeeAttack
 
         public override void OnWindowFocusChanged(bool hasFocus)
         {
-            base.OnResume();
+            base.OnWindowFocusChanged(hasFocus);
 
             if (!_running && _gameOverLayout.Visibility == ViewStates.Invisible)
             {

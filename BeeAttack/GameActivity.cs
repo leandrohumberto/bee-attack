@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Views;
 using Android.Widget;
 using Android.Views.Animations;
+using BeeAttack.Services;
 
 namespace BeeAttack
 {
@@ -22,7 +23,7 @@ namespace BeeAttack
         private bool _running;
         private LinearLayout _gameOverLayout;
         private Fragments.BeeAttackServiceFragment _fragment;
-        private Services.BeeAttackService _service;
+        private BeeAttackService _service;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -40,18 +41,18 @@ namespace BeeAttack
 
             if (_fragment == null)
             {
-                _fragment = new Fragments.BeeAttackServiceFragment(new Services.BeeAttackService(this));
+                _fragment = new Fragments.BeeAttackServiceFragment(new BeeAttackService(this));
                 var fragmentTransaction = FragmentManager.BeginTransaction();
                 fragmentTransaction.Add(_fragment, "GameService");
                 fragmentTransaction.Commit();
             }
             _service = _fragment.Service;
 
-            _service.HiveMoved += _service_HiveMoved;
-            _service.BeeAdded += _service_BeeAdded;
-            _service.GameOver += _service_GameOver;
-            _service.Missed += _service_Missed;
-            _service.Scored += _service_Scored;
+            _service.HiveMoved += Service_HiveMoved;
+            _service.BeeAdded += Service_BeeAdded;
+            _service.GameOver += Service_GameOver;
+            _service.Missed += Service_Missed;
+            _service.Scored += Service_Scored;
             _flower.Touch += Flower_Touch;
             _restart.Click += delegate 
             {
@@ -124,8 +125,9 @@ namespace BeeAttack
             _running = true;
         }
 
-        private void _service_BeeAdded(object sender, ImageView bee)
+        private void Service_BeeAdded(object sender, BeeAddedEventArgs args)
         {
+            var bee = args.Bee;
             bee.StartAnimation(AnimationUtils.LoadAnimation(this, Resource.Animation.beeview_animation));
             bee.Animation.AnimationEnd += _service.BeeLanded;
             RunOnUiThread(() => _gameArea.AddView(bee));
@@ -141,22 +143,22 @@ namespace BeeAttack
             };
         }
 
-        private void _service_HiveMoved(object sender, float x)
+        private void Service_HiveMoved(object sender, HiveMovedEventArgs args)
         {
-            RunOnUiThread(() => _hive.TranslationX = x);
+            RunOnUiThread(() => _hive.TranslationX = args.X);
         }
 
-        private void _service_Scored(object sender, int score)
+        private void Service_Scored(object sender, ScoredEventArgs args)
         {
-            _score.Text = score.ToString();
+            _score.Text = args.Score.ToString();
         }
 
-        private void _service_Missed(object sender, int missesLeft)
+        private void Service_Missed(object sender, MissedEventArgs args)
         {
-            _misses.Text = missesLeft.ToString();
+            _misses.Text = args.MissesLeft.ToString();
         }
 
-        private void _service_GameOver(object sender, EventArgs e)
+        private void Service_GameOver(object sender, EventArgs e)
         {
             _running = false;
             _gameOverLayout.Visibility = ViewStates.Visible;

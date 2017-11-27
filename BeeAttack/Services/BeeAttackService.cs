@@ -25,11 +25,11 @@ namespace BeeAttack.Services
 
         public bool Paused { get; set; }
 
-        public event EventHandler<float> HiveMoved;
-        public event EventHandler<ImageView> BeeAdded;
+        public event EventHandler<HiveMovedEventArgs> HiveMoved;
+        public event EventHandler<BeeAddedEventArgs> BeeAdded;
         public event EventHandler GameOver;
-        public event EventHandler<int> Missed;
-        public event EventHandler<int> Scored;
+        public event EventHandler<MissedEventArgs> Missed;
+        public event EventHandler<ScoredEventArgs> Scored;
 
         private readonly ObservableCollection<ImageView> _beeControls = new ObservableCollection<ImageView>();
         private readonly Model.BeeAttackModel _model = new Model.BeeAttackModel();
@@ -74,12 +74,12 @@ namespace BeeAttack.Services
         private void OnBeeAdded(ImageView bee)
         {
             _beeControls.Add(bee);
-            BeeAdded?.Invoke(this, bee);
+            BeeAdded?.Invoke(this, new BeeAddedEventArgs(bee));
         }
 
         private void OnHiveMoved(float _hiveTranslation)
         {
-            HiveMoved?.Invoke(this, _hiveTranslation);
+            HiveMoved?.Invoke(this, new HiveMovedEventArgs(_hiveTranslation));
         }
 
         private void OnGameOver()
@@ -89,12 +89,12 @@ namespace BeeAttack.Services
 
         private void OnMissed()
         {
-            Missed?.Invoke(this, _model.MissesLeft);
+            Missed?.Invoke(this, new MissedEventArgs(_model.MissesLeft));
         }
 
         private void OnScored()
         {
-            Scored?.Invoke(this, _model.Score);
+            Scored?.Invoke(this, new ScoredEventArgs(_model.Score));
         }
 
         void PlayerScoredEventHandler(object sender, EventArgs e)

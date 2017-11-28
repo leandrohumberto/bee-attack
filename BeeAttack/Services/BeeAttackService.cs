@@ -1,10 +1,4 @@
-﻿using Android.Views;
-using Android.Widget;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Drawing;
-using System.Linq;
+﻿using System;
 using System.Threading;
 
 namespace BeeAttack.Services
@@ -31,19 +25,15 @@ namespace BeeAttack.Services
         public event EventHandler<MissedEventArgs> Missed;
         public event EventHandler<ScoredEventArgs> Scored;
 
-        private readonly ObservableCollection<ImageView> _beeControls = new ObservableCollection<ImageView>();
         private readonly Model.BeeAttackModel _model = new Model.BeeAttackModel();
         private float _hiveTranslation;
-        private SizeF _beeSize;
+        private float _beeWidth;
+        private float _beeHeight;
+        private float _playAreaWidth;
         private Timer _timer;
-        private SizeF _playAreaSize;
-        private SizeF _hiveSize;
-        private SizeF _flowerSize;
-        private GameActivity _gameActivity;
         
-        public BeeAttackService(GameActivity gameActivity)
+        public BeeAttackService()
         {
-            _gameActivity = gameActivity;
             _model.Missed += MissedEventHandler;
             _model.GameOver += GameOverEventHandler;
             _model.PlayerScored += PlayerScoredEventHandler;
@@ -52,30 +42,16 @@ namespace BeeAttack.Services
 
         private void HiveTimerTick(object sender)
         {
-            if (_playAreaSize.Width <= 0 || IsGameOver || Paused)
+            if (_playAreaWidth <= 0 || IsGameOver || Paused)
                 return;
 
             _hiveTranslation = _model.NextHiveLocation();
             OnHiveMoved(_hiveTranslation);
-
-            ImageView bee = new ImageView(_gameActivity);
-            bee.TranslationX = _hiveTranslation + _hiveSize.Width / 2;
-            bee.TranslationY = _playAreaSize.Height + _flowerSize.Height / 3;
-            var layoutParams = new RelativeLayout.LayoutParams((int)_beeSize.Width, (int)_beeSize.Height);
-            layoutParams.AddRule(LayoutRules.AlignParentTop);
-            bee.LayoutParameters = layoutParams;
-            bee.SetImageResource(Resource.Drawable.bee);
-            bee.SetY(_hiveSize.Height);
-            bee.Visibility = ViewStates.Visible;
-
-            OnBeeAdded(bee);
+            OnBeeAdded(_hiveTranslation, _beeWidth, _beeHeight);
         }
 
-        private void OnBeeAdded(ImageView bee)
-        {
-            _beeControls.Add(bee);
-            BeeAdded?.Invoke(this, new BeeAddedEventArgs(bee));
-        }
+        private void OnBeeAdded(float translationX, float width, float height) 
+            => BeeAdded?.Invoke(this, new BeeAddedEventArgs(translationX, width, height));
 
         private void OnHiveMoved(float _hiveTranslation)
         {
@@ -113,33 +89,22 @@ namespace BeeAttack.Services
             OnMissed();
         }
 
-        public void StartGame(SizeF flowerSize, SizeF hiveSize, SizeF playAreaSize)
+        public void StartGame(float flowerWidth, float hiveWidth, float playAreaWidth)
         {
             _timer?.Dispose();
             _timer = new Timer(new TimerCallback(HiveTimerTick), null, _model.TimeBetweenBees, _model.TimeBetweenBees);
-            _flowerSize = flowerSize;
-            _hiveSize = hiveSize;
-            _playAreaSize = playAreaSize;
-            _beeSize = new SizeF(playAreaSize.Width / 10, playAreaSize.Width / 10);
-            _model.StartGame(_flowerSize.Width, _beeSize.Width, playAreaSize.Width, hiveSize.Width);
+            _playAreaWidth = playAreaWidth;
+            _beeWidth = playAreaWidth / 10;
+            _beeHeight = playAreaWidth / 10;
+            _model.StartGame(flowerWidth, _beeWidth, _playAreaWidth, hiveWidth);
             OnMissed();
 
             IsGameOver = false;
         }
 
-        public void BeeLanded(object sender, EventArgs e)
+        public void BeeLanded(double beeTranslationX)
         {
-            List<ImageView> landedBees = new List<ImageView>(_beeControls);
-            landedBees = (from control in landedBees
-                          where control.Animation == sender
-                          select control).ToList();
-
-            if (landedBees.Count > 0)
-            {
-                var landedBee = landedBees.First();
-                _model.BeeLanded(landedBee.TranslationX);
-                _beeControls.Remove(landedBee);
-            }          
+            _model.BeeLanded(beeTranslationX);
         }
 
         public void MoveFlower(float newX)

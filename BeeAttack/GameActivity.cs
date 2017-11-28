@@ -41,7 +41,7 @@ namespace BeeAttack
 
             if (_fragment == null)
             {
-                _fragment = new Fragments.BeeAttackServiceFragment(new BeeAttackService(this));
+                _fragment = new Fragments.BeeAttackServiceFragment(new BeeAttackService());
                 var fragmentTransaction = FragmentManager.BeginTransaction();
                 fragmentTransaction.Add(_fragment, "GameService");
                 fragmentTransaction.Commit();
@@ -117,9 +117,7 @@ namespace BeeAttack
 
         private void StartGame()
         {            
-            _service.StartGame(new System.Drawing.SizeF(_flower.Width, _flower.Height),
-                new System.Drawing.SizeF(_hive.Width, _hive.Height),
-                new System.Drawing.SizeF(_gameArea.Width, _gameArea.Height));
+            _service.StartGame(_flower.Width, _hive.Width, _gameArea.Width);
             MoveFlower((_gameArea.Width - _flower.Width) / 2);
             _gameOverLayout.Visibility = ViewStates.Invisible;
             _running = true;
@@ -127,12 +125,13 @@ namespace BeeAttack
 
         private void Service_BeeAdded(object sender, BeeAddedEventArgs args)
         {
-            var bee = args.Bee;
-            bee.StartAnimation(AnimationUtils.LoadAnimation(this, Resource.Animation.beeview_animation));
-            bee.Animation.AnimationEnd += _service.BeeLanded;
-            RunOnUiThread(() => _gameArea.AddView(bee));
-
-            bee.Animation.AnimationEnd += delegate
+            var bee = CreateBee(args.TranslationX, args.Width, args.Height);
+            var animation = AnimationUtils.LoadAnimation(this, Resource.Animation.beeview_animation);
+            animation.AnimationEnd += delegate 
+            {
+                _service.BeeLanded(args.TranslationX);
+            };
+            animation.AnimationEnd += delegate
             {
                 bee.ClearAnimation();
 
@@ -141,6 +140,9 @@ namespace BeeAttack
                 // RunOnUiThread(() => GameArea.RemoveView(bee)) causes an exception
                 bee.Visibility = ViewStates.Invisible;
             };
+            RunOnUiThread(() => _gameArea.AddView(bee));
+            bee.Animation = animation;
+            bee.Animation.Start();         
         }
 
         private void Service_HiveMoved(object sender, HiveMovedEventArgs args)
@@ -162,6 +164,22 @@ namespace BeeAttack
         {
             _running = false;
             _gameOverLayout.Visibility = ViewStates.Visible;
+        }
+
+        private View CreateBee(float translationX, float beeWidth, float beeHeight)
+        {
+            ImageView bee = new ImageView(this)
+            {
+                TranslationX = translationX + _hive.Width / 2.0f,
+                TranslationY = _gameArea.Height + _flower.Height / 3.0f
+            };
+            var layoutParams = new RelativeLayout.LayoutParams((int)beeWidth, (int)beeHeight);
+            layoutParams.AddRule(LayoutRules.AlignParentTop);
+            bee.LayoutParameters = layoutParams;
+            bee.SetImageResource(Resource.Drawable.bee);
+            bee.SetY(_hive.Height);
+            bee.Visibility = ViewStates.Visible;
+            return bee;
         }
     }
 }

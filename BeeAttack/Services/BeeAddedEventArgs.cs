@@ -1,14 +1,16 @@
-﻿using Android.Widget;
-
-namespace BeeAttack.Services
+﻿namespace BeeAttack.Services
 {
     public class BeeAddedEventArgs
     {
-        public ImageView Bee { get; private set; }
+        public float TranslationX { get; private set; }
+        public float Width { get; private set; }
+        public float Height { get; private set; }
 
-        public BeeAddedEventArgs(ImageView bee)
+        public BeeAddedEventArgs(float translationX, float width, float height)
         {
-            Bee = bee;
+            TranslationX = translationX;
+            Width = width;
+            Height = height;
         }
     }
 }
